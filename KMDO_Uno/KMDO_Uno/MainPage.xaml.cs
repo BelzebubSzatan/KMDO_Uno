@@ -14,5 +14,10 @@ namespace KMDO_Uno
         {
             InitializeComponent();
         }
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+
+        }
     }
 }
