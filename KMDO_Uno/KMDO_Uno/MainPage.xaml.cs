@@ -40,11 +40,42 @@ namespace KMDO_Uno
         }
         void RenderPlayerCards()
         {
-
+            if (win) return;
+            PlayersCards.Children.Clear();
+            playerCards=playerCards.OrderBy(z=>z.Color.ToString()).ToList();
+            foreach (Card c in playerCards)
+            {
+                Button card = c.Render();
+                card.Clicked += PlayerCardClick;
+                card.BindingContext = c;
+                if (playerAction)
+                {
+                    if (middleCard.Color == c.Color || middleCard.Value == c.Value||c.Action==SpecialActions.Color) {
+                        card.BorderWidth = 2;
+                        card.BorderColor = Color.Black;
+                    }
+                }
+                PlayersCards.Children.Add(card);
+            }
+            ComputerCards.Text = "Komputer ma: " + computerCards.Count();
         }
         private void PlayerCardClick(object sender, EventArgs e)
         {
-
+            if (win) return;
+            Card card=(sender as Button).BindingContext as Card;
+            if (playerAction)
+            {
+                if((sender as Button).BorderColor == Color.Black)
+                {
+                    if (card.Action != SpecialActions.Normal)
+                        SpecialCard(computerCards,card);
+                    middleCard=card;
+                    playerCards.Remove(card);
+                    RenderPlayerCards();
+                    WinCheck();
+                    playerAction = false;
+                }
+            }
         }
         async void WinCheck()
         {
