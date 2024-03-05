@@ -59,11 +59,52 @@ namespace KMDO_Uno
                 await DisplayAlert("Wygrana!", "Wygrał komputer", "OK");
             }
         }
-        void SpecialCard()
+        void SpecialCard(List<Card> Target, Card c)
         {
-
+            if (deck.deck.Count < 10)
+                deck.GenerateDeck();
+            if(c.Action == SpecialActions.AddTwo)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    Target.Add(deck.deck[i]);
+                    deck.deck.RemoveAt(0);
+                }
+            }
+            if (c.Action == SpecialActions.AddFour)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Target.Add(deck.deck[i]);
+                    deck.deck.RemoveAt(0);
+                }
+            }
         }
-        void ComputerMove() { }
+        void ComputerMove() 
+        {
+            if (win) return;
+            List<Card> possibleMove = computerCards.Where(e=>(e.Value==middleCard.Value||e.Color==middleCard.Color || e.Action == SpecialActions.Color)).ToList();
+            if(possibleMove.Count > 0) 
+            {
+                Random r = new Random();
+                int n = r.Next(possibleMove.Count);
+                Task.Delay(1000);
+                SetMiddleCard(possibleMove[n]);
+                ComputerAction.Text= "Komputer dał"+ possibleMove[n].Value+ " "+possibleMove[n].Color.ToString();
+                SpecialCard(playerCards, possibleMove[n]);
+                computerCards.Remove(possibleMove[n]);
+                playerAction = true;
+            }else
+            {
+                Task.Delay(1000);
+                computerCards.Add(deck.deck[0]);
+                ComputerAction.Text = "Komputer dobrał";
+                deck.deck.RemoveAt(0);
+            }
+            playerAction = true;
+            WinCheck();
+            RenderPlayerCards();
+        }
         private void Button_Clicked(object sender, EventArgs e)
         {
             if(playerAction&&!win)
