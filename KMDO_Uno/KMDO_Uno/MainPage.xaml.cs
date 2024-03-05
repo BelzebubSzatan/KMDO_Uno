@@ -27,7 +27,16 @@ namespace KMDO_Uno
         }
         void SetMiddleCard(Card c)
         {
-
+            if(middleCard==null) 
+            {
+                middleCard = deck.deck[0];
+                deck.deck.RemoveAt(0);  
+            }else
+            {
+                middleCard = c;
+            }
+            LastCardText.Text = middleCard.Value.ToString();
+            LastCardStack.BackgroundColor = middleCard.Color;
         }
         void RenderPlayerCards()
         {
@@ -37,9 +46,18 @@ namespace KMDO_Uno
         {
 
         }
-        void WinCheck()
+        async void WinCheck()
         {
-
+            if(playerCards.Count == 0) 
+            {
+                win = true;
+                await DisplayAlert("Wygrana!", "Wygrał gracz", "OK");
+            }
+            if(computerCards.Count == 0) 
+            {
+                win = true;
+                await DisplayAlert("Wygrana!", "Wygrał komputer", "OK");
+            }
         }
         void SpecialCard()
         {
